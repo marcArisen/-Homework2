@@ -1,12 +1,9 @@
 package io.muic.ooc.fab;
 
-import java.util.List;
-import java.util.Random;
-
 public class Rabbit extends Animal {
     // Characteristics shared by all rabbits (class variables).
 
-    // The age at which a rabbit can start to breed.
+/*    // The age at which a rabbit can start to breed.
     private static final int BREEDING_AGE = 5;
     // The age to which a rabbit can live.
     private static final int MAX_AGE = 40;
@@ -15,7 +12,10 @@ public class Rabbit extends Animal {
     // The maximum number of births.
     private static final int MAX_LITTER_SIZE = 4;
     // A shared random number generator to control breeding.
-    private static final Random RANDOM = new Random();
+
+    private static final int RABBIT_FOOD_VALUE = 9;
+
+    private static final Random RANDOM = new Random();*/
 
     /**
      * Create a new rabbit. A rabbit may be created with age zero (a new born)
@@ -25,14 +25,9 @@ public class Rabbit extends Animal {
      * @param field The field currently occupied.
      * @param location The location within the field.
      */
-    public Rabbit(boolean randomAge, Field field, Location location) {
-        age = 0;
-        setAlive(true);
-        this.field = field;
-        setLocation(location);
-        if (randomAge) {
-            age = RANDOM.nextInt(MAX_AGE);
-        }
+    @Override
+    public void initialize(boolean randomAge, Field field, Location location) {
+        super.initialize(randomAge,field,location);
     }
 
     /**
@@ -41,7 +36,15 @@ public class Rabbit extends Animal {
      *
      * @param newRabbits A list to return newly born rabbits.
      */
-    public void run(List<Rabbit> newRabbits) {
+
+    @Override
+    protected Location moveToNewLocation() {
+        return field.freeAdjacentLocation(location);
+    }
+
+
+
+    /*public void run(List<Rabbit> newRabbits) {
         incrementAge();
         if (isAlive()) {
             giveBirth(newRabbits);
@@ -55,29 +58,35 @@ public class Rabbit extends Animal {
             }
         }
     }
-
+*/
     @Override
     protected double getBreedingProbability() {
-        return BREEDING_PROBABILITY;
+        return 0.12;
     }
 
     @Override
     protected int getMaxLitterSize() {
-        return MAX_LITTER_SIZE;
+        return 4;
     }
 
     @Override
     public int getMaxAge() {
-        return MAX_AGE;
+        return 40;
     }
 
     @Override
     protected int getBreedingAge() {
-        return BREEDING_AGE;
+        return 5;
     }
 
-    @Override
+   /* @Override
     protected Animal createYoung(boolean randomAge, Field field, Location location) {
-        return new Rabbit(randomAge, field, location);
+      *//*  Rabbit rabbit = new Rabbit();
+        rabbit.initialize(randomAge,field,location);*//*
+         return AnimalFactory.createAnimal(this.getClass(),field,location);
+    }*/
+
+    static int getRabbitFoodValue(){
+        return 9;
     }
 }

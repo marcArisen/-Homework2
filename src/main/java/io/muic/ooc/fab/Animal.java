@@ -3,9 +3,9 @@ package io.muic.ooc.fab;
 import java.util.List;
 import java.util.Random;
 
-public abstract class Animal {
+public abstract class Animal extends Actor{
     // Whether the animal is alive or not.
-    private boolean alive;
+    private boolean alive = true;
 
     // The fox's position.
     protected Location location;
@@ -18,12 +18,35 @@ public abstract class Animal {
     private static final Random RANDOM = new Random();
 
 
+    public void initialize(boolean randomAge, Field field, Location location) {
+        this.field = field;
+        setLocation(location);
+        if (randomAge){
+            age = RANDOM.nextInt(getMaxAge());
+        }
+    }
+
+    public void act(List<Actor> newAnimales){
+        incrementAge();
+        if (isAlive()){
+            giveBirth(newAnimales);
+            Location newLocation = moveToNewLocation();
+            if ( newLocation != null){
+                setLocation(newLocation);
+            } else {
+                setDead();
+            }
+        }
+
+    }
+
+
     /**
      * Check whether the animal is alive or not.
      *
      * @return true if the animal is still alive.
      */
-    public boolean isAlive() {
+    public  boolean isAlive() {
         return alive;
     }
 
@@ -105,23 +128,20 @@ public abstract class Animal {
 
     protected abstract int getBreedingAge();
 
-    protected abstract Animal createYoung(boolean randomAge, Field field, Location location);
+    private Actor createYoung(boolean randomAge, Field field, Location location){
+        return AnimalFactory.createAnimal(this.getClass(),field,location);
+    }
 
-    /**
-     * Check whether or not this rabbit is to give birth at this step. New
-     * births will be made into free adjacent locations.
-     *
-     * @param newRabbits A list to return newly born rabbits.
-     */
-    protected void giveBirth(List newRabbits) {
+
+    protected void giveBirth(List newAnimal) {
         // New rabbits are born into adjacent locations.
         // Get a list of adjacent free locations.
         List<Location> free = field.getFreeAdjacentLocations(location);
         int births = breed();
         for (int b = 0; b < births && free.size() > 0; b++) {
             Location loc = free.remove(0);
-            Animal young = createYoung(false, field, loc);
-            newRabbits.add(young);
+            Actor young = createYoung(false, field, loc);
+            newAnimal.add(young);
         }
     }
 
